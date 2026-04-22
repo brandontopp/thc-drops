@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your Drop | Mood</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #ffffff;
+}
+
+.wrap {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 20px 16px 32px;
+  box-sizing: border-box;
+}
+
+.header {
+  background: #1B3A2F;
+  border-radius: 14px;
+  padding: 22px 24px 18px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.header-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin: 0 0 6px;
+}
+
+.header-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 4px;
+  letter-spacing: -0.3px;
+}
+
+.header-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.65);
+  margin: 0;
+}
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.prog-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ddd;
+  transition: background 0.25s;
+  flex-shrink: 0;
+}
+
+.prog-dot.active {
+  background: #1B3A2F;
+}
+
+.prog-dot.done {
+  background: #1B3A2F;
+  opacity: 0.35;
+}
+
+.step {
+  display: none;
+}
+
+.step.active {
+  display: block;
+}
+
+.q-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #1B3A2F;
+  margin-bottom: 8px;
+}
+
+.q-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 2px solid #e6e1d8;
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: #ffffff;
+  transition: border-color 0.15s, background 0.15s;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card:hover {
+  border-color: #1B3A2F;
+  background: #f3f8f5;
+}
+
+.card.selected {
+  border-color: #1B3A2F;
+  background: #EAF2EC;
+}
+
+.card-icon {
+  font-size: 24px;
+  width: 34px;
+  text-align: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.card-body {
+  flex: 1;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 2px;
+}
+
+.card-hint {
+  font-size: 12px;
+  color: #999;
+  margin: 0;
+}
+
+/* Result */
+
+.result {
+  display: none;
+  border: 2px solid #1B3A2F;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.result.show {
+  display: block;
+}
+
+.result-top {
+  background: #1B3A2F;
+  padding: 14px 20px;
+}
+
+.result-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: rgba(255,255,255,0.6);
+  margin: 0 0 2px;
+}
+
+.result-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  margin: 0;
+}
+
+.result-body {
+  padding: 20px 20px 22px;
+}
+
+.result-product {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1B3A2F;
+  margin: 0 0 8px;
+  line-height: 1.25;
+}
+
+.result-desc {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.55;
+  margin: 0 0 18px;
+}
+
+.result-cta {
+  display: inline-block;
+  background: #1B3A2F;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 12px 26px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.result-cta:hover {
+  background: #26503f;
+}
+
+.restart-btn {
+  display: block;
+  margin-top: 14px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  color: #aaa;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-family: inherit;
+  transition: color 0.15s;
+}
+
+.restart-btn:hover {
+  color: #1B3A2F;
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="header">
+    <p class="header-eyebrow">Mood Quiz</p>
+    <h2 class="header-title">Find Your Drop</h2>
+    <p class="header-sub">Two questions. One honest recommendation.</p>
+  </div>
+
+  <div class="progress-row" id="prog-row">
+    <div class="prog-dot active" id="pd0"></div>
+    <div class="prog-dot" id="pd1"></div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step active" id="step0">
+    <p class="q-label">Question 1 of 2</p>
+    <p class="q-text">Where are you starting from?</p>
+    <div class="cards">
+      <button class="card" onclick="pick(this, 0, 'new')">
+        <span class="card-icon">🌱</span>
+        <span class="card-body">
+          <span class="card-title">New to this</span>
+          <span class="card-hint">First time or close to it</span>
+        </span>
+      </button>
+      <button class="card" onclick="pick(this, 0, 'some')">
+        <span class="card-icon">👋</span>
+        <span class="card-body">
+          <span class="card-title">A little experience</span>
+          <span class="card-hint">I know roughly what to expect</span>
+        </span>
+      </button>
+      <button class="card" onclick="pick(this, 0, 'regular')">
+        <span class="card-icon">🔥</span>
+        <span class="card-body">
+          <span class="card-title">Regular user</span>
+          <span class="card-hint">Looking for something with more to offer</span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step" id="step1">
+    <p class="q-label">Question 2 of 2</p>
+    <p class="q-text">What's the vibe tonight?</p>
+    <div class="cards">
+      <button class="card" onclick="pick(this, 1, 'chill')">
+        <span class="card-icon">🛋️</span>
+        <span class="card-body">
+          <span class="card-title">Low-key and easy</span>
+          <span class="card-hint">A relaxed evening, nothing too intense</span>
+        </span>
+      </button>
+      <button class="card" onclick="pick(this, 1, 'social')">
+        <span class="card-icon">🥂</span>
+        <span class="card-body">
+          <span class="card-title">Social and upbeat</span>
+          <span class="card-hint">Out with people, want to feel good</span>
+        </span>
+      </button>
+      <button class="card" onclick="pick(this, 1, 'full')">
+        <span class="card-icon">✨</span>
+        <span class="card-body">
+          <span class="card-title">The full experience</span>
+          <span class="card-hint">Ready to really feel it</span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="result" id="result">
+    <div class="result-top">
+      <p class="result-eyebrow">Your recommendation</p>
+    </div>
+    <div class="result-body">
+      <p class="result-product" id="res-product"></p>
+      <p class="result-desc" id="res-desc"></p>
+      <a href="#" id="res-link" class="result-cta" target="_blank" rel="noopener">Shop now</a>
+      <button class="restart-btn" onclick="restart()">Start over</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var answers = {};
+
+var rec = {
+  euphoric: {
+    product: "Euphoric Nano THC Syrup",
+    desc: "6.25mg Delta-9 per teaspoon with 12.5mg CBD keeps the experience balanced and approachable. Fast onset, easy to add to any drink. From $30.",
+    link: "https://mood.com/product/euphoric-nano-thc-syrup"
+  },
+  hero: {
+    product: "Hero Dose Nano THC Syrup",
+    desc: "10.4mg Delta-9 per teaspoon alongside Delta-8, THCp, and CBD. A five to 15 minute onset and a multi-cannabinoid formula built for people who know what they want. From $40.",
+    link: "https://mood.com/product/hero-dose-nano-thc-syrup"
+  }
+};
+
+function pick(el, step, value) {
+  answers[step] = value;
+
+  var stepCards = document.querySelectorAll('#step' + step + ' .card');
+  for (var i = 0; i < stepCards.length; i++) {
+    stepCards[i].classList.remove('selected');
+  }
+  el.classList.add('selected');
+
+  setTimeout(function() {
+    if (step === 0) {
+      goToStep(1);
+    } else {
+      showResult();
+    }
+  }, 300);
+}
+
+function goToStep(n) {
+  document.getElementById('step0').classList.remove('active');
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step' + n).classList.add('active');
+  document.getElementById('pd0').className = 'prog-dot done';
+  document.getElementById('pd1').className = 'prog-dot active';
+  sendResize();
+}
+
+function showResult() {
+  document.getElementById('step0').classList.remove('active');
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('prog-row').style.display = 'none';
+
+  var exp = answers[0];
+  var vibe = answers[1];
+  var chosen = (exp === 'regular' || (exp === 'some' && vibe === 'full')) ? rec.hero : rec.euphoric;
+
+  document.getElementById('res-product').textContent = chosen.product;
+  document.getElementById('res-desc').textContent = chosen.desc;
+  document.getElementById('res-link').href = chosen.link;
+  document.getElementById('result').classList.add('show');
+  sendResize();
+}
+
+function restart() {
+  answers = {};
+  var allCards = document.querySelectorAll('.card');
+  for (var i = 0; i < allCards.length; i++) {
+    allCards[i].classList.remove('selected');
+  }
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('prog-row').style.display = 'flex';
+  document.getElementById('step0').classList.add('active');
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('pd0').className = 'prog-dot active';
+  document.getElementById('pd1').className = 'prog-dot';
+  sendResize();
+}
+
+function sendResize() {
+  setTimeout(function() {
+    var h = document.documentElement.scrollHeight || document.body.scrollHeight;
+    try { window.parent.postMessage({ type: 'resize', height: h }, '*'); } catch(e) {}
+  }, 60);
+}
+
+sendResize();
+window.addEventListener('load', sendResize);
+</script>
+
+</body>
+</html>
